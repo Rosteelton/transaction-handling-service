@@ -1,5 +1,56 @@
-name := "transaction-handling-service"
+lazy val aecorVersion = "0.18.0"
+lazy val aecorPostgresVersion = "0.3.0"
 
-version := "0.1"
+lazy val aecor = Seq(
+  "io.aecor" %% "core" % aecorVersion,
+  "io.aecor" %% "schedule" % aecorVersion,
+  "io.aecor" %% "akka-cluster-runtime" % aecorVersion,
+  "io.aecor" %% "distributed-processing" % aecorVersion,
+  "io.aecor" %% "boopickle-wire-protocol" % aecorVersion,
+  "io.aecor" %% "aecor-postgres-journal" % aecorPostgresVersion,
+  "io.aecor" %% "test-kit" % aecorVersion % Test
+)
 
-scalaVersion := "2.12.8"
+lazy val transactions =
+  project
+    .in(file("."))
+    .settings(
+      baseSettings,
+      libraryDependencies ++=
+        aecor ++
+          Seq(
+            )
+    )
+
+lazy val baseSettings = Seq(
+  name := "transaction-handling-service",
+  scalaVersion in ThisBuild := "2.12.8",
+  resolvers ++= Seq(
+    Resolver.sonatypeRepo("releases"),
+    Resolver.sonatypeRepo("snapshots"),
+  ),
+  scalacOptions ++= commonScalacOptions,
+  cancelable in Global := true
+)
+
+lazy val commonScalacOptions = Seq(
+  "-deprecation",
+  "-encoding",
+  "UTF-8",
+  "-feature",
+  "-language:existentials",
+  "-language:higherKinds",
+  "-language:implicitConversions",
+  "-language:experimental.macros",
+  "-unchecked",
+  "-Xfatal-warnings",
+  "-Xlint",
+  "-Yno-adapted-args",
+  "-Ywarn-dead-code",
+  "-Ywarn-numeric-widen",
+  "-Ywarn-value-discard",
+  "-Xfuture",
+  "-Ypartial-unification",
+  "-Ywarn-unused",
+  "-Ywarn-unused-import"
+)

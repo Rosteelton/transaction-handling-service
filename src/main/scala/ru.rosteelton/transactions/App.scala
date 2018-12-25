@@ -1,5 +1,5 @@
 package ru.rosteelton.transactions
 
-class App {
+class App extends {
 
 }
