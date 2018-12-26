@@ -1,5 +1,6 @@
 lazy val aecorVersion = "0.18.0"
 lazy val aecorPostgresVersion = "0.3.0"
+lazy val mouseVersion = "0.19"
 
 lazy val aecor = Seq(
   "io.aecor" %% "core" % aecorVersion,
@@ -19,7 +20,9 @@ lazy val transactions =
       libraryDependencies ++=
         aecor ++
           Seq(
-            )
+            compilerPlugin("org.spire-math" %% "kind-projector" % "0.9.9"),
+            "org.typelevel" %% "mouse" % mouseVersion,
+          )
     )
 
 lazy val baseSettings = Seq(
