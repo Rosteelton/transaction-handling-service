@@ -1,3 +1,7 @@
 package ru.rosteelton.transactions.accounts.aggregate
 
-final case class UserAccountKey(value: String) extends AnyVal
+import ru.rosteelton.transactions.common.models.AccountId
+
+final case class UserAccountKey(value: String) extends AnyVal {
+  def toAccountId: AccountId = AccountId(value)
+}

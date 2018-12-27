@@ -2,7 +2,9 @@ package ru.rosteelton.transactions.accounts.aggregate
 
 import aecor.macros.boopickleWireProtocol
 import cats.tagless.autoFunctorK
-import ru.rosteelton.transactions.common.models.{Money, TransactionId, UserId}
+import ru.rosteelton.transactions.common.models.{ Money, TransactionId, UserId }
+import boopickle.Default._
+import scodec.Codec
 
 @autoFunctorK(false)
 @boopickleWireProtocol
@@ -19,4 +21,12 @@ object UserAccountRejection {
   case object InsufficientBalance extends UserAccountRejection
 }
 
+object UserAccountAggregate {
+  implicit val rejectionPickler: boopickle.Pickler[UserAccountRejection] =
+    compositePickler[UserAccountRejection]
+      .addConcreteType[UserAccountRejection.AccountDoesNotExist.type]
+      .addConcreteType[UserAccountRejection.InsufficientBalance.type]
 
+  implicit val rejectionCodec: Codec[UserAccountRejection] =
+    aecor.macros.boopickle.BoopickleCodec.codec[UserAccountRejection]
+}

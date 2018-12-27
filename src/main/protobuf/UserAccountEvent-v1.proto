@@ -10,7 +10,6 @@ option (scalapb.options) = {
 };
 
 import "scalapb/scalapb.proto";
-//import "Common.proto";
 
 message AccountCreated {
     string userId = 1 [(scalapb.field).type = "ru.rosteelton.transactions.common.models.UserId"];
