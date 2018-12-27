@@ -1,9 +1,9 @@
-package ru.rosteelton.transactions.common.accounts.aggregate
+package ru.rosteelton.transactions.accounts.aggregate
 
 import aecor.data.Folded
 import ru.rosteelton.transactions.common.models._
 import aecor.data.Folded.syntax._
-import ru.rosteelton.transactions.common.accounts.aggregate.UserAccountEvent.{
+import ru.rosteelton.transactions.accounts.aggregate.UserAccountEvent.{
   AccountCreated,
   AccountCredited,
   AccountDebited

@@ -1,17 +1,14 @@
-package ru.rosteelton.transactions.common.accounts.aggregate
+package ru.rosteelton.transactions.accounts.aggregate
 
 import aecor.MonadActionReject
 import aecor.data.{EitherK, EventTag, EventsourcedBehavior, Tagging}
-import cats.implicits._
+import cats.Monad
 import mouse.boolean._
-import ru.rosteelton.transactions.common.accounts.aggregate.UserAccountEvent.{
-  AccountCreated,
-  AccountCredited,
-  AccountDebited
-}
+import ru.rosteelton.transactions.accounts.aggregate.UserAccountEvent.{AccountCreated, AccountCredited, AccountDebited}
 import ru.rosteelton.transactions.common.models.{Money, TransactionId, UserId}
+import cats.syntax.all._
 
-class DefaultUserAccountAggregate[F[_], I[_]](
+class DefaultUserAccountAggregate[I[_]](
     implicit I: MonadActionReject[I,
                                   Option[UserAccountState],
                                   UserAccountEvent,
@@ -35,7 +32,7 @@ class DefaultUserAccountAggregate[F[_], I[_]](
     }
 
   def debitAccount(transactionId: TransactionId, sum: Money): I[Unit] =
-    readExisting.map { state =>
+    readExisting.flatMap { state =>
       DefaultUserAccountAggregate
         .ifTransactionCompleted(state, transactionId)
         .fold(unit,
@@ -46,7 +43,7 @@ class DefaultUserAccountAggregate[F[_], I[_]](
     }
 
   def creditAccount(transactionId: TransactionId, sum: Money): I[Unit] =
-    readExisting.map { state =>
+    readExisting.flatMap { state =>
       DefaultUserAccountAggregate
         .ifTransactionCompleted(state, transactionId)
         .fold(unit, append(AccountCredited(transactionId, sum)))
@@ -57,7 +54,7 @@ class DefaultUserAccountAggregate[F[_], I[_]](
 
 object DefaultUserAccountAggregate {
 
-  def behavior[F[_]]: EventsourcedBehavior[EitherK[
+  def behavior[F[_]: Monad]: EventsourcedBehavior[EitherK[
                                              UserAccountAggregate,
                                              UserAccountRejection,
                                              ?[_]
@@ -67,7 +64,7 @@ object DefaultUserAccountAggregate {
                                            UserAccountEvent] =
     EventsourcedBehavior
       .optionalRejectable(
-        new DefaultUserAccountAggregate,
+        new DefaultUserAccountAggregate(),
         UserAccountState.init,
         _.handleEvent(_)
       )

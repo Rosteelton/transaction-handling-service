@@ -1,4 +1,4 @@
-package ru.rosteelton.transactions.common.accounts
+package ru.rosteelton.transactions.accounts
 
 import aecor.runtime.Eventsourced.Entities
 

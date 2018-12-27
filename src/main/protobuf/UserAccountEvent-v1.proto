@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package ru.rosteelton.transactions.userAccounts.protobuf.v1;
+option java_package = "ru.rosteelton.transactions.userAccounts.protobuf.msg";
+option optimize_for = SPEED;
+
+option (scalapb.options) = {
+  import: "ru.rosteelton.transactions.common.protobuf.TypeMappers._"
+  single_file: true
+};
+
+import "scalapb/scalapb.proto";
+//import "Common.proto";
+
+message AccountCreated {
+    string userId = 1 [(scalapb.field).type = "ru.rosteelton.transactions.common.models.UserId"];
+    string withSum = 2 [(scalapb.field).type = "ru.rosteelton.transactions.common.models.Money"];
+    int64 timestamp = 3 [(scalapb.field).type = "java.time.Instant"];
+}
+
+message AccountDebited {
+    string transactionId = 1 [(scalapb.field).type = "ru.rosteelton.transactions.common.models.TransactionId"];
+    string sum = 2 [(scalapb.field).type = "ru.rosteelton.transactions.common.models.Money"];
+    int64 timestamp = 3 [(scalapb.field).type = "java.time.Instant"];
+}
+
+message AccountCredited {
+    string transactionId = 1 [(scalapb.field).type = "ru.rosteelton.transactions.common.models.TransactionId"];
+    string sum = 2 [(scalapb.field).type = "ru.rosteelton.transactions.common.models.Money"];
+    int64 timestamp = 3 [(scalapb.field).type = "java.time.Instant"];
+}

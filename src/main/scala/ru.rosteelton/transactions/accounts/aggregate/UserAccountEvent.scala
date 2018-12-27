@@ -1,4 +1,4 @@
-package ru.rosteelton.transactions.common.accounts.aggregate
+package ru.rosteelton.transactions.accounts.aggregate
 
 import ru.rosteelton.transactions.common.models.{Money, TransactionId, UserId}
 

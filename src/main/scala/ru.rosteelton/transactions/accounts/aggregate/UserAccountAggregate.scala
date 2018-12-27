@@ -1,4 +1,4 @@
-package ru.rosteelton.transactions.common.accounts.aggregate
+package ru.rosteelton.transactions.accounts.aggregate
 
 import aecor.macros.boopickleWireProtocol
 import cats.tagless.autoFunctorK
