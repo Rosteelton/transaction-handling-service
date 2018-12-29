@@ -6,6 +6,7 @@ lazy val http4sVersion = "0.20.0-M3"
 lazy val doobieVersion = "0.6.0"
 lazy val circeDerivationVersion = "0.10.0-M1"
 lazy val circeVersion = "0.10.1"
+lazy val log4CatsVersion = "0.2.0"
 
 lazy val aecor = Seq(
   "io.aecor" %% "core" % aecorVersion,
@@ -38,6 +39,11 @@ lazy val circe = Seq(
   "io.circe" %% "circe-parser" % circeVersion
 )
 
+val logger = Seq(
+  "io.chrisdavenport" %% "log4cats-core" % log4CatsVersion,
+  "io.chrisdavenport" %% "log4cats-slf4j" % log4CatsVersion,
+)
+
 //"com.ovoenergy" %% "fs2-kafka" % "0.16.4",
 
 lazy val transactions =
@@ -46,7 +52,7 @@ lazy val transactions =
     .settings(
       baseSettings,
       libraryDependencies ++=
-        aecor ++ doobie ++ http4s ++ circe ++
+        aecor ++ doobie ++ http4s ++ circe ++ logger ++
           Seq(
             compilerPlugin("org.spire-math" %% "kind-projector" % "0.9.9"),
             "com.thesamet.scalapb" %% "scalapb-runtime" % scalapb.compiler.Version.scalapbVersion % "protobuf",
