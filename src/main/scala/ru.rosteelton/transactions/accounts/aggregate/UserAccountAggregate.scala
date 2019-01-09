@@ -2,8 +2,9 @@ package ru.rosteelton.transactions.accounts.aggregate
 
 import aecor.macros.boopickleWireProtocol
 import cats.tagless.autoFunctorK
-import ru.rosteelton.transactions.common.models.{ Money, TransactionId, UserId }
+import ru.rosteelton.transactions.common.models.{Money, TransactionId, UserId}
 import boopickle.Default._
+import io.circe.Encoder
 import scodec.Codec
 
 @autoFunctorK(false)
@@ -19,6 +20,10 @@ sealed trait UserAccountRejection extends Product with Serializable
 object UserAccountRejection {
   case object AccountDoesNotExist extends UserAccountRejection
   case object InsufficientBalance extends UserAccountRejection
+
+
+  implicit val userAccountRejectionEncoder: Encoder[UserAccountRejection] =
+    Encoder[String].contramap(_.toString)
 }
 
 object UserAccountAggregate {
