@@ -3,7 +3,6 @@ package ru.rosteelton.transactions.accounts.view
 import aecor.data.{Enriched, EntityEvent, Folded}
 import cats.Functor
 import cats.implicits._
-import cats.syntax.option._
 import ru.rosteelton.transactions.accounts.aggregate.{UserAccountEvent, UserAccountKey, UserAccountMeta, UserAccountState}
 import ru.rosteelton.transactions.common.projection.Projection
 

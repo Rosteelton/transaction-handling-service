@@ -21,13 +21,15 @@ object DefaultProjectionFlow {
     }
 
     def runProjection(event: EntityEvent[K, E]): F[Unit] =
-      for {
-        (currentVersion, currentState) <- projection.fetchVersionAndState(event)
-        _ <- logger.debug(s"Current $currentVersion [$currentState]")
-        _ <- (currentVersion.value < event.sequenceNr).fold(foldEvent(event, currentState).flatMap { state =>
-              projection.saveNewVersion(state, currentVersion + 1)
-            }, ().pure[F])
-      } yield ()
+      projection.fetchVersionAndState(event).flatMap {
+        case ((currentVersion, currentState)) =>
+          for {
+            _ <- logger.debug(s"Current $currentVersion [$currentState]")
+            _ <- (currentVersion < event.sequenceNr).fold(foldEvent(event, currentState).flatMap { state =>
+                  projection.saveNewVersion(state, currentVersion + 1)
+                }, ().pure[F])
+          } yield ()
+      }
 
     _.evalMap(_.traverse(runProjection)).evalMap(_.commit)
   }
