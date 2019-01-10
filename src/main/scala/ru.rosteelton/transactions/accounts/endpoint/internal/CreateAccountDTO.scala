@@ -1,4 +1,4 @@
-package ru.rosteelton.transactions.accounts.endpoints.internal
+package ru.rosteelton.transactions.accounts.endpoint.internal
 
 import io.circe.Decoder
 import io.circe.derivation.deriveDecoder

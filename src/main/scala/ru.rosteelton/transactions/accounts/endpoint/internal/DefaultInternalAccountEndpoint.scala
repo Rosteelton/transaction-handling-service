@@ -1,4 +1,4 @@
-package ru.rosteelton.transactions.accounts.endpoints.internal
+package ru.rosteelton.transactions.accounts.endpoint.internal
 
 import cats.Functor
 import cats.implicits._

@@ -1,4 +1,4 @@
-package ru.rosteelton.transactions.accounts.endpoints
+package ru.rosteelton.transactions.accounts.endpoint
 
 import ru.rosteelton.transactions.accounts.view.{ AccountRepo, AccountView }
 import ru.rosteelton.transactions.common.models.{ AccountId, UserId }

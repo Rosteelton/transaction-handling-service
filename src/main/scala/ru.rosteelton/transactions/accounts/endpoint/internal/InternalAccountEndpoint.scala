@@ -1,4 +1,4 @@
-package ru.rosteelton.transactions.accounts.endpoints.internal
+package ru.rosteelton.transactions.accounts.endpoint.internal
 
 import ru.rosteelton.transactions.accounts.aggregate.UserAccountRejection
 import ru.rosteelton.transactions.common.models.{AccountId, Money, TransactionId, UserId}

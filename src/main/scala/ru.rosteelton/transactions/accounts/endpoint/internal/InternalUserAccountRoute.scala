@@ -1,4 +1,4 @@
-package ru.rosteelton.transactions.accounts.endpoints.internal
+package ru.rosteelton.transactions.accounts.endpoint.internal
 
 import cats.effect.Effect
 import org.http4s.circe._

@@ -1,9 +1,14 @@
 package ru.rosteelton.transactions.accounts.view
 
-import aecor.data.{Enriched, EntityEvent, Folded}
+import aecor.data.{ Enriched, EntityEvent, Folded }
 import cats.Functor
 import cats.implicits._
-import ru.rosteelton.transactions.accounts.aggregate.{UserAccountEvent, UserAccountKey, UserAccountMeta, UserAccountState}
+import ru.rosteelton.transactions.accounts.aggregate.{
+  UserAccountEvent,
+  UserAccountKey,
+  UserAccountMeta,
+  UserAccountState
+}
 import ru.rosteelton.transactions.common.projection.Projection
 
 class AccountViewProjection[F[_]: Functor](repo: AccountRepo[F])
@@ -52,4 +57,8 @@ class AccountViewProjection[F[_]: Functor](repo: AccountRepo[F])
             )
           )
     }
+}
+
+object AccountViewProjection {
+  def apply[F[_]: Functor](repo: AccountRepo[F]): AccountViewProjection[F] = new AccountViewProjection(repo)
 }
