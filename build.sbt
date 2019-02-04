@@ -7,6 +7,12 @@ lazy val doobieVersion = "0.6.0"
 lazy val circeDerivationVersion = "0.10.0-M1"
 lazy val circeVersion = "0.10.1"
 lazy val log4CatsVersion = "0.2.0"
+lazy val pureConfigVersion = "0.10.0"
+
+lazy val pureConfig = Seq(
+  "com.github.pureconfig" %% "pureconfig" % pureConfigVersion,
+  "com.github.pureconfig" %% "pureconfig-http4s" % pureConfigVersion
+)
 
 lazy val aecor = Seq(
   "io.aecor" %% "core" % aecorVersion,
@@ -52,7 +58,7 @@ lazy val transactions =
     .settings(
       baseSettings,
       libraryDependencies ++=
-        aecor ++ doobie ++ http4s ++ circe ++ logger ++
+        aecor ++ doobie ++ http4s ++ circe ++ logger ++ pureConfig ++
           Seq(
             compilerPlugin("org.spire-math" %% "kind-projector" % "0.9.9"),
             "com.thesamet.scalapb" %% "scalapb-runtime" % scalapb.compiler.Version.scalapbVersion % "protobuf",
