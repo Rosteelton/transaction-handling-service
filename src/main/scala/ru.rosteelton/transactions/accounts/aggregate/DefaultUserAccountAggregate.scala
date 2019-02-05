@@ -56,17 +56,15 @@ class DefaultUserAccountAggregate[F[_], I[_]](
 
 object DefaultUserAccountAggregate {
 
-  def behavior[F[_]: Monad]: EventsourcedBehavior[EitherK[
-    UserAccountAggregate,
-    UserAccountRejection,
-    ?[_]
-  ], F, Option[UserAccountState], UserAccountEvent] =
+  def behavior[F[_]: Monad]: EventsourcedBehavior[EitherK[UserAccountAggregate, UserAccountRejection, ?[_]], F, Option[
+    UserAccountState
+  ], UserAccountEvent] =
     EventsourcedBehavior
       .optionalRejectable(new DefaultUserAccountAggregate, UserAccountState.init, _.handleEvent(_))
 
   val entityName: String = "UserAccount"
   val entityTag: EventTag = EventTag(entityName)
-  val tagging: Tagging[UserAccountKey] = Tagging.const(entityTag)
+  val tagging: Tagging[UserAccountKey] = Tagging.partitioned(10)(entityTag)
 
   def ifTransactionCompleted(state: UserAccountState, transactionId: TransactionId): Boolean =
     state.processedTransactions.contains(transactionId)

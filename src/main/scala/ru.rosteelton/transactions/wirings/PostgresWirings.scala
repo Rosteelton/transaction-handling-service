@@ -13,7 +13,7 @@ import ru.rosteelton.transactions.accounts.serialization.UserAccountProtobufSeri
 import ru.rosteelton.transactions.accounts.view.AccountViewRepo
 import ru.rosteelton.transactions.config.{EventJournals, PostgresConfig}
 
-class PostgresWirings[F[_]: Async](transactor: Transactor[F], eventJournalConfig: EventJournals) {
+class PostgresWirings[F[_]: Async](transactor: Transactor[F], val eventJournalConfig: EventJournals) {
   val accountViewRepo = AccountViewRepo(transactor)
   val offsetStore = PostgresOffsetStore("consumer_offset")
   val offsetKeyValueStore: KeyValueStore[F, TagConsumer, Offset] =

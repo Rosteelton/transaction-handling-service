@@ -65,6 +65,7 @@ lazy val transactions =
             compilerPlugin("org.scalameta" % "paradise" % metaParadiseVersion cross CrossVersion.full),
             "org.typelevel" %% "mouse" % mouseVersion,
             "io.monix" %% "monix" % "3.0.0-RC2",
+            "io.chrisdavenport" %% "cats-par" % "0.2.0"
           )
     )
 
