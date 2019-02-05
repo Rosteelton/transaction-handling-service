@@ -48,3 +48,8 @@ final class InternalUserAccountRoute[F[_]: Effect](ops: InternalAccountEndpoint[
 
   val routes: HttpRoutes[F] = createAccountRoute <+> debitAccountRoute <+> creditAccountRoute
 }
+
+object InternalUserAccountRoute {
+  def apply[F[_]: Effect](ops: InternalAccountEndpoint[F]): HttpRoutes[F] =
+    new InternalUserAccountRoute[F](ops).routes
+}

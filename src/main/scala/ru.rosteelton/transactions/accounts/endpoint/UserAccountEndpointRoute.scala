@@ -5,7 +5,7 @@ import org.http4s.HttpRoutes
 import org.http4s.dsl.Http4sDsl
 import org.http4s.circe._
 import cats.implicits._
-import ru.rosteelton.transactions.common.models.{AccountId, UserId}
+import ru.rosteelton.transactions.common.models.{ AccountId, UserId }
 import io.circe.syntax._
 
 final class UserAccountEndpointRoute[F[_]: Effect](ops: UserAccountEndpoint[F]) extends Http4sDsl[F] {
@@ -20,7 +20,10 @@ final class UserAccountEndpointRoute[F[_]: Effect](ops: UserAccountEndpoint[F]) 
       ops.getAccountsForUser(UserId(userId)).flatMap(accounts => Ok(accounts.asJson))
   }
 
-  val routes = getAccountById <+> getAccountsByUserId
+  val routes: HttpRoutes[F] = getAccountById <+> getAccountsByUserId
+}
 
-
+object UserAccountEndpointRoute {
+  def apply[F[_]: Effect](ops: UserAccountEndpoint[F]): HttpRoutes[F] =
+    new UserAccountEndpointRoute[F](ops).routes
 }

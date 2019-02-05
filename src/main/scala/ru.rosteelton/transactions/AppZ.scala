@@ -1,15 +1,15 @@
 package ru.rosteelton.transactions
 
 import akka.actor.ActorSystem
-import cats.effect.{ConcurrentEffect, ContextShift, IO, Resource}
+import cats.effect._
 import com.typesafe.config.ConfigFactory
 import pureconfig.generic.auto._
 import ru.rosteelton.transactions.config.AppConfig
-import ru.rosteelton.transactions.wirings.PostgresWirings
+import ru.rosteelton.transactions.wirings.{EndpointWirings, EntityWirings, PostgresWirings}
 import cats.implicits._
 import doobie.util.transactor.Transactor
 
-class AppZ[F[_]: ContextShift](implicit F: ConcurrentEffect[F]) {
+class AppZ[F[_]: ContextShift: Timer](implicit F: ConcurrentEffect[F]) {
 
   case class Resources(appConfig: AppConfig, actorSystem: ActorSystem, transactor: Transactor[F])
 
@@ -24,8 +24,11 @@ class AppZ[F[_]: ContextShift](implicit F: ConcurrentEffect[F]) {
     } yield Resources(appConfig, actorSystem, transactor)
 
   def program(resources: Resources): F[Unit] = {
+    val clock = Clock.create[F]
     for {
-      _ <- PostgresWirings(resources.transactor, resources.appConfig.eventJournals)
+      postgresWirings <- PostgresWirings(resources.transactor, resources.appConfig.eventJournals)
+      entityWirings <- EntityWirings(resources.actorSystem, clock, postgresWirings)
+      _ <- EndpointWirings(resources.appConfig.httpServer, postgresWirings, entityWirings).startHttpServer
     } yield ()
   }
 }
