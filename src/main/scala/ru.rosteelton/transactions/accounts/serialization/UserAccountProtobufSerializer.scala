@@ -12,7 +12,7 @@ import ru.rosteelton.transactions.accounts.aggregate.{ UserAccountEvent, UserAcc
 import ru.rosteelton.transactions.userAccounts.protobuf.msg
 import cats.syntax.either._
 
-class UserAccountProtobufSerializer
+object UserAccountProtobufSerializer
     extends PostgresEventJournal.Serializer[Enriched[UserAccountMeta, UserAccountEvent]] {
 
   def serialize(a: Enriched[UserAccountMeta, UserAccountEvent]): (TypeHint, Array[Byte]) =

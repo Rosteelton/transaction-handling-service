@@ -83,6 +83,6 @@ final class AccountViewRepo[F[_]: Monad](transactor: Transactor[F], tableName: S
 }
 
 object AccountViewRepo {
-  def apply[F[_]: Monad](transactor: Transactor[F], tableName: String = "account"): AccountRepo[F] =
+  def apply[F[_]: Monad](transactor: Transactor[F], tableName: String = "account"): AccountViewRepo[F] =
     new AccountViewRepo(transactor, tableName)
 }
