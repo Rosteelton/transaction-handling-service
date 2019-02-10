@@ -50,8 +50,6 @@ val logger = Seq(
   "io.chrisdavenport" %% "log4cats-slf4j" % log4CatsVersion,
 )
 
-//"com.ovoenergy" %% "fs2-kafka" % "0.16.4",
-
 lazy val transactions =
   project
     .in(file("."))
@@ -67,7 +65,7 @@ lazy val transactions =
             "io.monix" %% "monix" % "3.0.0-RC2",
             "io.chrisdavenport" %% "cats-par" % "0.2.0"
           )
-    )
+    ).enablePlugins(DockerPlugin, JavaAppPackaging)
 
 lazy val baseSettings = Seq(
   name := "transaction-handling-service",
@@ -81,6 +79,10 @@ lazy val baseSettings = Seq(
   PB.targets in Compile := Seq(
     scalapb.gen(flatPackage = true) -> (sourceManaged in Compile).value
   ),
+  sources in(Compile, doc) := Nil,
+  dockerExposedPorts := Seq(9000),
+  dockerBaseImage := "java:8.161",
+  mainClass in Compile := Some("ru.rosteelton.transactions.App"),
   scalacOptions in(Compile, console) ~= {
     _.filterNot(unusedWarnings.toSet + "-Ywarn-value-discard")
   },

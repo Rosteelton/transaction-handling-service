@@ -17,6 +17,7 @@ class AppZ[F[_]: ContextShift: Timer: Par](implicit F: ConcurrentEffect[F]) {
   def createResources: Resource[F, Resources] =
     for {
       config <- Resource.liftF(F.delay(ConfigFactory.load()))
+      _ = println(config.getString("postgres"))
       appConfig <- Resource.liftF(F.delay(pureconfig.loadConfigOrThrow[AppConfig](config)))
       actorSystem <- Resource.make(F.delay(ActorSystem(appConfig.cluster.systemName, config)))(
                       system => F.liftIO(IO.fromFuture(IO.delay(system.terminate()))).void
