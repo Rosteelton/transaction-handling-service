@@ -79,7 +79,7 @@ final class AccountViewRepo[F[_]: Monad](transactor: Transactor[F], tableName: S
   """).update.run
 
   private val createIndexQuery =
-    Update0(s"CREATE UNIQUE INDEX IF NOT EXISTS ${tableName}_user_id_index ON $tableName user_id", none).run
+    Update0(s"CREATE UNIQUE INDEX IF NOT EXISTS ${tableName}_user_id_index ON $tableName (user_id)", none).run
 }
 
 object AccountViewRepo {
