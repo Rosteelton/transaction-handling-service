@@ -1,18 +1,19 @@
 package ru.rosteelton.transactions.accounts.aggregate
 
-import aecor.MonadActionReject
-import aecor.data.{EitherK, EventTag, EventsourcedBehavior, Tagging}
+import aecor.MonadActionLiftReject
+import aecor.data._
 import cats.Monad
 import mouse.boolean._
-import ru.rosteelton.transactions.accounts.aggregate.UserAccountEvent.{AccountCreated, AccountCredited, AccountDebited}
-import ru.rosteelton.transactions.common.models.{Money, TransactionId, UserId}
+import ru.rosteelton.transactions.accounts.aggregate.UserAccountEvent.{
+  AccountCreated,
+  AccountCredited,
+  AccountDebited
+}
+import ru.rosteelton.transactions.common.models.{ Money, TransactionId, UserId }
 import cats.syntax.all._
 
-class DefaultUserAccountAggregate[I[_]](
-    implicit I: MonadActionReject[I,
-                                  Option[UserAccountState],
-                                  UserAccountEvent,
-                                  UserAccountRejection]
+class DefaultUserAccountAggregate[F[_], I[_]](
+  implicit I: MonadActionLiftReject[I, F, Option[UserAccountState], UserAccountEvent, UserAccountRejection]
 ) extends UserAccountAggregate[I] {
 
   import I._
@@ -35,11 +36,12 @@ class DefaultUserAccountAggregate[I[_]](
     readExisting.flatMap { state =>
       DefaultUserAccountAggregate
         .ifTransactionCompleted(state, transactionId)
-        .fold(unit,
-              state
-                .isSufficientBalance(sum)
-                .fold(append(AccountDebited(transactionId, sum)),
-                      reject(UserAccountRejection.InsufficientBalance)))
+        .fold(
+          unit,
+          state
+            .isSufficientBalance(sum)
+            .fold(append(AccountDebited(transactionId, sum)), reject(UserAccountRejection.InsufficientBalance))
+        )
     }
 
   def creditAccount(transactionId: TransactionId, sum: Money): I[Unit] =
@@ -54,26 +56,16 @@ class DefaultUserAccountAggregate[I[_]](
 
 object DefaultUserAccountAggregate {
 
-  def behavior[F[_]: Monad]: EventsourcedBehavior[EitherK[
-                                             UserAccountAggregate,
-                                             UserAccountRejection,
-                                             ?[_]
-                                           ],
-                                           F,
-                                           Option[UserAccountState],
-                                           UserAccountEvent] =
+  def behavior[F[_]: Monad]: EventsourcedBehavior[EitherK[UserAccountAggregate, UserAccountRejection, ?[_]], F, Option[
+    UserAccountState
+  ], UserAccountEvent] =
     EventsourcedBehavior
-      .optionalRejectable(
-        new DefaultUserAccountAggregate(),
-        UserAccountState.init,
-        _.handleEvent(_)
-      )
+      .optionalRejectable(new DefaultUserAccountAggregate, UserAccountState.init, _.handleEvent(_))
 
   val entityName: String = "UserAccount"
   val entityTag: EventTag = EventTag(entityName)
-  val tagging: Tagging[UserAccountKey] = Tagging.const(entityTag)
+  val tagging: Tagging[UserAccountKey] = Tagging.partitioned(10)(entityTag)
 
-  def ifTransactionCompleted(state: UserAccountState,
-                             transactionId: TransactionId): Boolean =
+  def ifTransactionCompleted(state: UserAccountState, transactionId: TransactionId): Boolean =
     state.processedTransactions.contains(transactionId)
 }

@@ -2,8 +2,8 @@ package ru.rosteelton.transactions.accounts.endpoint.internal
 
 import cats.Functor
 import cats.implicits._
-import ru.rosteelton.transactions.accounts.aggregate.{UserAccountKey, UserAccountRejection, UserAccounts}
-import ru.rosteelton.transactions.common.models.{AccountId, Money, TransactionId, UserId}
+import ru.rosteelton.transactions.accounts.aggregate.{ UserAccountKey, UserAccountRejection, UserAccounts }
+import ru.rosteelton.transactions.common.models.{ AccountId, Money, TransactionId, UserId }
 
 class DefaultInternalAccountEndpoint[F[_]: Functor](userAccountAggregate: UserAccounts[F])
     extends InternalAccountEndpoint[F] {
@@ -20,4 +20,9 @@ class DefaultInternalAccountEndpoint[F[_]: Functor](userAccountAggregate: UserAc
                    transactionId: TransactionId,
                    sum: Money): F[Either[UserAccountRejection, Unit]] =
     userAccountAggregate(UserAccountKey(accountId.value)).debitAccount(transactionId, sum)
+}
+
+object DefaultInternalAccountEndpoint {
+  def apply[F[_]: Functor](userAccountAggregate: UserAccounts[F]): InternalAccountEndpoint[F] =
+    new DefaultInternalAccountEndpoint[F](userAccountAggregate)
 }

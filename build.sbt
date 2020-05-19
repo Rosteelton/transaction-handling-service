@@ -7,6 +7,14 @@ lazy val doobieVersion = "0.6.0"
 lazy val circeDerivationVersion = "0.10.0-M1"
 lazy val circeVersion = "0.10.1"
 lazy val log4CatsVersion = "0.2.0"
+lazy val pureConfigVersion = "0.10.0"
+lazy val akkaVersion = "2.5.18"
+lazy val logbackVersion = "1.2.3"
+
+lazy val pureConfig = Seq(
+  "com.github.pureconfig" %% "pureconfig" % pureConfigVersion,
+  "com.github.pureconfig" %% "pureconfig-http4s" % pureConfigVersion
+)
 
 lazy val aecor = Seq(
   "io.aecor" %% "core" % aecorVersion,
@@ -44,23 +52,25 @@ val logger = Seq(
   "io.chrisdavenport" %% "log4cats-slf4j" % log4CatsVersion,
 )
 
-//"com.ovoenergy" %% "fs2-kafka" % "0.16.4",
-
 lazy val transactions =
   project
     .in(file("."))
     .settings(
       baseSettings,
+      sources in(Compile, doc) := Nil,
       libraryDependencies ++=
-        aecor ++ doobie ++ http4s ++ circe ++ logger ++
+        aecor ++ doobie ++ http4s ++ circe ++ logger ++ pureConfig ++
           Seq(
             compilerPlugin("org.spire-math" %% "kind-projector" % "0.9.9"),
             "com.thesamet.scalapb" %% "scalapb-runtime" % scalapb.compiler.Version.scalapbVersion % "protobuf",
             compilerPlugin("org.scalameta" % "paradise" % metaParadiseVersion cross CrossVersion.full),
             "org.typelevel" %% "mouse" % mouseVersion,
             "io.monix" %% "monix" % "3.0.0-RC2",
+            "io.chrisdavenport" %% "cats-par" % "0.2.0",
+            "com.typesafe.akka" %% "akka-slf4j" % akkaVersion,
+            "ch.qos.logback" % "logback-classic" % logbackVersion
           )
-    )
+    ).enablePlugins(DockerPlugin, JavaAppPackaging)
 
 lazy val baseSettings = Seq(
   name := "transaction-handling-service",
@@ -74,6 +84,10 @@ lazy val baseSettings = Seq(
   PB.targets in Compile := Seq(
     scalapb.gen(flatPackage = true) -> (sourceManaged in Compile).value
   ),
+  sources in(Compile, doc) := Nil,
+  dockerExposedPorts := Seq(9000),
+  dockerBaseImage := "java:8.161",
+  mainClass in Compile := Some("ru.rosteelton.transactions.App"),
   scalacOptions in(Compile, console) ~= {
     _.filterNot(unusedWarnings.toSet + "-Ywarn-value-discard")
   },

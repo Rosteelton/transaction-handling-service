@@ -10,3 +10,7 @@ class DefaultUserAccountEndpoint[F[_]](accountRepo: AccountRepo[F]) extends User
   def getAccountsForUser(userId: UserId): F[List[AccountView]] =
     accountRepo.getAccountsForUser(userId)
 }
+
+object DefaultUserAccountEndpoint {
+  def apply[F[_]](accountRepo: AccountRepo[F]): UserAccountEndpoint[F] = new DefaultUserAccountEndpoint[F](accountRepo)
+}
