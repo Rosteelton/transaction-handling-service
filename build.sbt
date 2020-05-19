@@ -9,6 +9,7 @@ lazy val circeVersion = "0.10.1"
 lazy val log4CatsVersion = "0.2.0"
 lazy val pureConfigVersion = "0.10.0"
 lazy val akkaVersion = "2.5.18"
+lazy val logbackVersion = "1.2.3"
 
 lazy val pureConfig = Seq(
   "com.github.pureconfig" %% "pureconfig" % pureConfigVersion,
@@ -56,6 +57,7 @@ lazy val transactions =
     .in(file("."))
     .settings(
       baseSettings,
+      sources in(Compile, doc) := Nil,
       libraryDependencies ++=
         aecor ++ doobie ++ http4s ++ circe ++ logger ++ pureConfig ++
           Seq(
@@ -65,7 +67,8 @@ lazy val transactions =
             "org.typelevel" %% "mouse" % mouseVersion,
             "io.monix" %% "monix" % "3.0.0-RC2",
             "io.chrisdavenport" %% "cats-par" % "0.2.0",
-            "com.typesafe.akka" %% "akka-slf4j" % akkaVersion
+            "com.typesafe.akka" %% "akka-slf4j" % akkaVersion,
+            "ch.qos.logback" % "logback-classic" % logbackVersion
           )
     ).enablePlugins(DockerPlugin, JavaAppPackaging)
 

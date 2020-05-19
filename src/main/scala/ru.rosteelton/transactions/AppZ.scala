@@ -1,7 +1,5 @@
 package ru.rosteelton.transactions
 
-import java.io.File
-
 import akka.actor.ActorSystem
 import cats.effect._
 import com.typesafe.config.ConfigFactory
@@ -18,8 +16,7 @@ class AppZ[F[_]: ContextShift: Timer: Par](implicit F: ConcurrentEffect[F]) {
 
   def createResources: Resource[F, Resources] =
     for {
-      parsedConfig <- Resource.liftF(F.delay(ConfigFactory.parseFile(new File("src/main/resources/application.conf"))))
-      config <- Resource.liftF(F.delay(ConfigFactory.load(parsedConfig)))
+      config <- Resource.liftF(F.delay(ConfigFactory.load()))
       appConfig <- Resource.liftF(F.delay(pureconfig.loadConfigOrThrow[AppConfig](config)))
       actorSystem <- Resource.make(F.delay(ActorSystem(appConfig.cluster.systemName, config)))(
                       system => F.liftIO(IO.fromFuture(IO.delay(system.terminate()))).void

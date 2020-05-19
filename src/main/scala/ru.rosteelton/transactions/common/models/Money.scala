@@ -3,7 +3,7 @@ package ru.rosteelton.transactions.common.models
 import cats.kernel.Monoid
 import io.circe.{ Decoder, Encoder }
 
-final case class Money(value: BigDecimal) extends AnyVal {
+final case class Money(value: BigDecimal) {
   def +(amount: Money): Money = Money(value + amount.value)
   def -(amount: Money): Money = Money(value - amount.value)
 }
